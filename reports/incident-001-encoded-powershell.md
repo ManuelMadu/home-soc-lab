@@ -1,9 +1,9 @@
-# Incident Report 001 — Encoded PowerShell Execution
+# Incident Report 001 - Encoded PowerShell Execution
 
 **Severity:** Medium
 **Date/Time detected:** 2026-04-18 11:32 UTC
 **Analyst:** Manuel Madubugini
-**Detection rule:** T1059.001 — Encoded PowerShell Execution
+**Detection rule:** T1059.001 - Encoded PowerShell Execution
 **Affected host:** DESKTOP-OTH20VH
 **Affected user:** labuser
 
@@ -25,7 +25,7 @@ My alert fired with 3 matching events. When I reviewed them in Splunk I found:
   and found none
 - I checked for file writes (Sysmon Event ID 11) and found none
 
-The decoded command is benign, but the *technique* matches MITRE T1059.001
+The decoded command is benign, but the technique matches MITRE T1059.001
 and is heavily used by Emotet, Cobalt Strike, and living-off-the-land actors.
 
 ## 3. Triage decision
@@ -53,18 +53,18 @@ I would then:
 
 ## 6. Recovery
 To recover, I would:
-- Re-image the host if rootkit or kernel-level indicators were present;
+- Re-image the host if rootkit or kernel-level indicators were present,
   otherwise perform a validated clean-up and monitored return to service
 - Verify Sysmon, EDR, and the forwarder remain healthy post-recovery
 
 ## 7. Lessons learned
 From this exercise, I identified several improvements:
 - I should enable PowerShell ScriptBlock Logging (Event ID 4104) alongside
-  4688 — it captures the *decoded* script content, which would make triage
-  much faster
+  4688. It captures the decoded script content, which would make triage
+  much faster.
 - I should consider Constrained Language Mode or AppLocker / WDAC policies
-  to limit what PowerShell can do for non-admin users
+  to limit what PowerShell can do for non-admin users.
 - I need to tune the detection further: enrich with parent process, exclude
   known-good signed binaries (SCCM, Intune), and add risk scoring when the
   decoded string contains red-flag tokens like `IEX`, `DownloadString`, or
-  `FromBase64String`
+  `FromBase64String`.
