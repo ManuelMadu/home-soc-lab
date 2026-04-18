@@ -1,0 +1,13 @@
+# Detection: Encoded PowerShell Execution (MITRE ATT&CK T1059.001)
+# Author: Manuel Madubugini
+# Description:
+#   PowerShell's -EncodedCommand flag accepts Base64-encoded commands.
+#   Attackers use this to obfuscate payloads and evade string-based detection.
+#   Legitimate uses exist (some installers, admin scripts), so this is a
+#   medium-fidelity signal requiring triage — not an auto-block.
+# Data sources: Windows Security Event ID 4688 (Process Creation)
+# Tune-outs: known admin scripts, SCCM/Intune agents (add NOT clauses as needed)
+
+index=win_events EventCode=4688 "EncodedCommand"
+| table _time, host, Account_Name, Process_Command_Line, Creator_Process_Name
+| sort - _time
